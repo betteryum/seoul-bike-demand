@@ -1,6 +1,6 @@
 # Independent CI Scope and Sources
 
-This workflow checks the frozen day-ahead inference contract in the independent repository. The first private [GitHub Actions run](https://github.com/betteryum/seoul-bike-demand/actions/runs/45920704558) passed at commit `8f311e9e0bc165689cab69150bbe1b5494ec6162`: locked package restore, synchronized `renv`, SQL audit, and 12 acceptance checks. Local clean-session acceptance also passed on macOS R 4.4.1. The current commit's CI result must be checked before public release.
+This workflow checks the frozen day-ahead inference contract in the independent repository. The first private [GitHub Actions run](https://github.com/betteryum/seoul-bike-demand/actions/runs/45920704558) passed at commit `8f311e9e0bc165689cab69150bbe1b5494ec6162`: locked package restore, synchronized `renv`, SQL audit, and 12 acceptance checks. The documentation commit then passed [run 45922044658](https://github.com/betteryum/seoul-bike-demand/actions/runs/45922044658) at `83506577ff58497b75f6ba19446e2c626504eb95`. Local clean-session acceptance also passed on macOS R 4.4.1. The workflow badge and current Actions result are the release gate for later commits.
 
 ## First-party references
 
@@ -17,4 +17,4 @@ This workflow checks the frozen day-ahead inference contract in the independent 
 
 Only explicit source paths, outcome-free development demo inputs, SQL audit scripts, the split manifest, the frozen model artifact, and aggregate performance evidence are checked out. The CI job checks for private course materials, row-level locked-test files, test-access markers, and common secret files before restoring dependencies. The tests do not train, select, or evaluate a new model and do not deploy the App. The SQL audit uses an in-memory synthetic exact-lag fixture and the development-only demo; it does not load locked-test rows.
 
-The sparse working tree is a runtime boundary, not a publication audit of Git history. Before any repository becomes public, its entire independent history and committed contents must pass a separate source and secret review. No recovery repository history may be imported.
+The sparse working tree is a runtime boundary, not a publication audit of Git history. A separate pre-publication review audited both independent commits through `83506577ff58497b75f6ba19446e2c626504eb95`, all 47 historical paths, tracked source, documentation, dependency metadata, links, and frozen hashes. It found no recovery history, course prompts or solutions, row-level locked-test files, credentials, API keys, or local user paths. Later release-only documentation changes remain subject to their own CI run before visibility changes.

@@ -18,9 +18,27 @@ The package restore action took about 75.8 seconds; the whole job ran about 125 
 
 The test output contained no warnings or errors. Checkout printed a Git hint about the default name of its temporary initialization branch; it subsequently checked out this repository's `main`. This is a runner advisory, with no effect on the project branch or test result. Post-job cache save succeeded.
 
+## Documentation commit verification
+
+The private-repository [GitHub Actions run 45922044658](https://github.com/betteryum/seoul-bike-demand/actions/runs/45922044658) completed successfully for documentation commit `83506577ff58497b75f6ba19446e2c626504eb95` on `main`.
+
+| Check | Observed evidence |
+|---|---|
+| Runner | Ubuntu 24.04.5 LTS, x86-64; R 4.4.1 |
+| Dependencies | Existing package-cache hit; `renv::restore()` executed; `renv::status()` reported synchronized |
+| Acceptance | 12/12 PASS; 3.88 seconds; four `testthat` groups passed without warnings |
+| Frozen evidence | Model and three aggregate evidence MD5 values matched exactly |
+| Boundaries | Restricted files absent; no row-level locked-test access; no model refit or selection |
+
+Runner setup printed two Python `SyntaxWarning` lines from Ubuntu's `gdebi`, a system-package advisory that `libx11-dev` was not installed for the unrelated `clipr` package, and a Git hint about the temporary initialization branch. These were not R or test warnings: the restored project was synchronized, every acceptance check passed, and every job step concluded successfully.
+
 ## Local clean-session evidence
 
 On macOS with R 4.4.1, the independent staging project's restored library synchronized with the 114-package lockfile. Restore took 10.7 seconds, mostly linking an existing local package cache. A separate `Rscript --vanilla` invocation with explicit staging activation passed all 12 acceptance checks and the two SQL audits with zero warnings. The installation checkpoint's 8.37-second runtime includes its preflight, standalone SQL audit, and clean-session acceptance. The SQL precheck recorded Python 3.9.6 and SQLite 3.39.5.
+
+## Pre-publication history audit
+
+The independent history through `83506577ff58497b75f6ba19446e2c626504eb95` contains exactly two commits and 47 historical paths. The audit covered both complete commit trees, all tracked source and documentation, the lockfile, workflow, links, frozen artifacts, aggregate evidence, and model strings. It found no imported recovery history, course prompt or answer files, row-level locked-test features, predictions or outcomes, credentials, API keys, or local user paths. The repository owner accepted publication of the existing commit author metadata.
 
 ## Frozen evidence boundary
 

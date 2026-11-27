@@ -1,5 +1,7 @@
 # Seoul Bike Demand: Day-Ahead Hourly Forecasting
 
+[![Independent Seoul Bike R acceptance](https://github.com/betteryum/seoul-bike-demand/actions/workflows/phase5_acceptance.yml/badge.svg?branch=main&event=push)](https://github.com/betteryum/seoul-bike-demand/actions/workflows/phase5_acceptance.yml)
+
 An R portfolio project that forecasts the 24 system-wide hourly bike rental counts for the next day. At 00:00 in `Asia/Seoul` on day D, the model issues forecasts for hours 00–23 on D+1. Inputs use calendar information and demand observed strictly before issue time; realized target-day weather is excluded.
 
 ## Results and evaluation
@@ -33,7 +35,19 @@ Missing dates and partial days are excluded by the eligibility contract. The hol
 - A Shiny historical forecast replay, aggregate performance views, and contract explanation. Replay inputs have no outcome column; the App does not read row-level locked-test files.
 - A model artifact whose MD5 is `e4da864280d502584c8a899053193a58`, checked before inference.
 
-The independent `testthat` suite, locked `renv` environment, and single acceptance command passed locally and in the first GitHub Actions run on Ubuntu 24.04. The 12-check CI run used a fresh package-cache key, restored the locked environment, and passed frozen inference without row-level locked-test access. See [reproduction](docs/reproduction.md) and [verification evidence](docs/verification.md).
+The independent `testthat` suite, locked `renv` environment, and single acceptance command passed locally and in both audited private GitHub Actions runs on Ubuntu 24.04. The latest audited run, [45922044658](https://github.com/betteryum/seoul-bike-demand/actions/runs/45922044658), verified commit `83506577ff58497b75f6ba19446e2c626504eb95`: synchronized dependencies, 12/12 acceptance checks, unchanged frozen hashes, no R/test warnings, and no row-level locked-test access. See [reproduction](docs/reproduction.md) and [verification evidence](docs/verification.md).
+
+## Run locally
+
+Use R 4.4.1 and Python 3 from the repository root. These commands restore the lockfile, run the complete acceptance gate, and then launch the historical replay App; they do not retrain or reselect the model.
+
+```sh
+Rscript --vanilla -e 'Sys.setenv(RENV_PROJECT = getwd()); source("renv/activate.R"); renv::restore(prompt = FALSE); stopifnot(isTRUE(renv::status(project = getwd())$synchronized))'
+Rscript --vanilla -e 'Sys.setenv(RENV_PROJECT = getwd()); source("renv/activate.R"); source("scripts/90_phase5_acceptance.R")'
+Rscript --vanilla -e 'Sys.setenv(RENV_PROJECT = getwd()); source("renv/activate.R"); shiny::runApp("app")'
+```
+
+The acceptance command must report 12/12 `PASS`. Detailed scope, generated outputs, and troubleshooting boundaries are in [reproduction](docs/reproduction.md).
 
 ## Data provenance and origin
 
