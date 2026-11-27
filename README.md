@@ -33,7 +33,7 @@ Missing dates and partial days are excluded by the eligibility contract. The hol
 - A Shiny historical forecast replay, aggregate performance views, and contract explanation. Replay inputs have no outcome column; the App does not read row-level locked-test files.
 - A model artifact whose MD5 is `e4da864280d502584c8a899053193a58`, checked before inference.
 
-The independent `testthat` suite, locked `renv` environment, and one-command acceptance have passed locally in a clean R session. GitHub Actions is staged but has not run in a new repository. See [reproduction](docs/reproduction.md) for commands, evidence, and the remaining CI gate.
+The independent `testthat` suite, locked `renv` environment, and single acceptance command passed locally and in the first GitHub Actions run on Ubuntu 24.04. The 12-check CI run used a fresh package-cache key, restored the locked environment, and passed frozen inference without row-level locked-test access. See [reproduction](docs/reproduction.md) and [verification evidence](docs/verification.md).
 
 ## Data provenance and origin
 

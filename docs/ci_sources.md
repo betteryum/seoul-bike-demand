@@ -1,6 +1,6 @@
 # Independent CI Scope and Sources
 
-This workflow checks the frozen day-ahead inference contract in a future independent repository. The workflow is a staged candidate until that repository has been audited, committed, and run successfully. A local clean R session passed 12 acceptance checks on macOS R 4.4.1, including the SQL audit; this is not a claim of GitHub Actions success.
+This workflow checks the frozen day-ahead inference contract in the independent repository. The first private [GitHub Actions run](https://github.com/betteryum/seoul-bike-demand/actions/runs/45920704558) passed at commit `8f311e9e0bc165689cab69150bbe1b5494ec6162`: locked package restore, synchronized `renv`, SQL audit, and 12 acceptance checks. Local clean-session acceptance also passed on macOS R 4.4.1. The current commit's CI result must be checked before public release.
 
 ## First-party references
 
