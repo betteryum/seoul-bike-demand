@@ -1,0 +1,68 @@
+contract_version: 1
+status: accepted_pending_executable_acceptance
+timezone: Asia/Seoul
+target: RENTED_BIKE_COUNT
+prediction_unit: system_hour
+forecast_issue:
+  time: "00:00"
+  issue_day: D
+  target_day: D_plus_1
+  minimum_horizon_hours: 24
+  maximum_horizon_hours: 47
+scope:
+  functioning_days_only: true
+  require_complete_target_day: true
+  required_target_hours: 24
+  require_exact_lag_48: true
+  require_exact_lag_168: true
+features:
+  future_known_calendar:
+    - hour
+    - day_of_week
+    - weekend
+    - month
+    - holiday
+    - cyclic_hour
+    - cyclic_day_of_year
+  historical_demand:
+    - lag_48
+    - lag_168
+    - past_only_hour_profile
+    - past_only_rolling_features
+  excluded:
+    - future_realized_weather
+    - lag_24
+    - raw_seasons_factor
+    - functioning_day_predictor
+    - full_data_normalization
+split:
+  design: chronological_split_A
+  train:
+    start: 2017-12-01
+    end: 2018-07-31
+    eligible_days: 230
+    eligible_hours: 5520
+  validation:
+    start: 2018-08-01
+    end: 2018-09-30
+    eligible_days: 53
+    eligible_hours: 1272
+  test:
+    start: 2018-10-01
+    end: 2018-11-30
+    eligible_days: 42
+    eligible_hours: 1008
+    access: locked_until_final_model_selection
+metrics:
+  primary: rmse
+  secondary: mae
+  supplemental: r_squared
+baselines:
+  - past_only_hour_of_week_mean
+  - lag_48
+  - lag_168
+postprocessing:
+  lower_bound: 0
+  round_for_evaluation: false
+  round_for_display: true
+

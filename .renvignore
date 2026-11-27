@@ -1,0 +1,7 @@
+.Rproj.user/
+renv/
+app/data/
+artifacts/
+data/
+docs/
+run-logs/

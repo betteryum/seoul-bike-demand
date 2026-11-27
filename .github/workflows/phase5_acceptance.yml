@@ -1,0 +1,102 @@
+name: Independent Seoul Bike R acceptance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen_inference:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CI: "true"
+    steps:
+      - name: Check out only accepted inference inputs
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          clean: false
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .Rprofile
+            .renvignore
+            _dependencies.R
+            seoul-bike-demand.Rproj
+            R/predict.R
+            app/app.R
+            app/R/app_data.R
+            app/R/mod_contract.R
+            app/R/mod_forecast.R
+            app/R/mod_performance.R
+            app/data/demo_forecast_inputs.csv
+            configs/day_ahead_contract.yml
+            data/splits/day_ahead_split_manifest.csv
+            artifacts/phase3/final/final_model.rds
+            artifacts/phase3/final/test_metrics.csv
+            artifacts/phase3/final/test_slice_audit.csv
+            artifacts/phase3/final/validation_vs_test.csv
+            renv.lock
+            renv/.gitignore
+            renv/activate.R
+            renv/settings.json
+            scripts/90_phase5_acceptance.R
+            scripts/audit_sql.py
+            sql/01_exact_lag_audit.sql
+            sql/02_development_day_audit.sql
+            tests/testthat/helper-seoul.R
+            tests/testthat/test-app-boundary.R
+            tests/testthat/test-contract.R
+            tests/testthat/test-inference-integration.R
+            tests/testthat/test-integrity.R
+
+      - name: Check restricted workspace before restore
+        shell: bash
+        run: |
+          test -f renv.lock
+          test -f artifacts/phase3/final/final_model.rds
+          for path in \
+            course-recovery \
+            data/modeling/test_features.csv \
+            artifacts/phase3/final/test_predictions.csv \
+            artifacts/phase1/baseline/test_predictions.csv \
+            artifacts/phase3/final/test_access_started.txt \
+            artifacts/phase3/final/test_access_completed.txt \
+            .Renviron .env .httr-oauth credentials.json; do
+            if test -e "$path"; then
+              printf 'Prohibited CI file present: %s\n' "$path"
+              exit 1
+            fi
+          done
+          mkdir -p "$HOME/Desktop"
+
+      - name: Set up locked R version
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: renv
+          use-public-rspm: true
+
+      - name: Restore locked packages
+        uses: r-lib/actions/setup-renv@v2
+
+      - name: Verify restored environment
+        shell: Rscript {0}
+        run: |
+          state <- renv::status(project = getwd())
+          stopifnot(isTRUE(state$synchronized))
+
+      - name: Run frozen inference acceptance
+        shell: Rscript {0}
+        run: |
+          source("scripts/90_phase5_acceptance.R")
+          checks <- readr::read_csv(
+            "artifacts/phase5/acceptance/checks.csv",
+            show_col_types = FALSE
+          )
+          stopifnot(nrow(checks) == 12L, all(checks$status == "PASS"))

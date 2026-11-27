@@ -1,0 +1,49 @@
+:root {
+  --seoul-green: #0b6e4f;
+  --seoul-dark: #17342b;
+  --seoul-muted: #5b6573;
+  --seoul-soft: #edf7f1;
+}
+
+body {
+  color: var(--seoul-dark);
+  background: #f7f9fb;
+}
+
+.app-title {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.navbar {
+  box-shadow: 0 2px 10px rgba(18, 52, 43, 0.09);
+}
+
+.bslib-card {
+  border: 1px solid rgba(31, 61, 52, 0.09);
+  box-shadow: 0 5px 18px rgba(31, 61, 52, 0.06);
+}
+
+.card-header {
+  font-weight: 650;
+}
+
+.boundary-note {
+  padding: 0.9rem 1rem;
+  margin-top: 0.8rem;
+  border-left: 4px solid var(--seoul-green);
+  border-radius: 0.35rem;
+  background: var(--seoul-soft);
+  color: #345248;
+}
+
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  .boundary-note {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

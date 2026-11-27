@@ -1,0 +1,13 @@
+model,metric,estimate
+seoul_day_ahead_rf_v1,mae,178.4790628590898
+lag_168,mae,226.7678571428567
+hour_of_week_mean,mae,239.4220450635116
+lag_48,mae,247.0089285714284
+seoul_day_ahead_rf_v1,rmse,276.2712528222907
+hour_of_week_mean,rmse,335.92458784936343
+lag_168,rmse,383.0903189331695
+lag_48,rmse,389.4233641522024
+lag_48,rsq,0.5629128949780375
+lag_168,rsq,0.5948945525995825
+hour_of_week_mean,rsq,0.6851594194210953
+seoul_day_ahead_rf_v1,rsq,0.7688591585239332

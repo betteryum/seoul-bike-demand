@@ -1,0 +1,16 @@
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.Renviron
+.DS_Store
+.httr-oauth
+.quarto/
+renv/library/
+renv/staging/
+run-logs/
+STAGING_ONLY_DO_NOT_PUBLISH.txt
+STAGING_SOURCE_MANIFEST.csv
+artifacts/phase5/acceptance/
+__pycache__/
+*.pyc
