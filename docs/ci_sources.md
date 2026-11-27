@@ -1,6 +1,15 @@
 # Independent CI Scope and Sources
 
-This workflow checks the frozen day-ahead inference contract in the independent repository. The first private [GitHub Actions run](https://github.com/betteryum/seoul-bike-demand/actions/runs/45920704558) passed at commit `8f311e9e0bc165689cab69150bbe1b5494ec6162`: locked package restore, synchronized `renv`, SQL audit, and 12 acceptance checks. The documentation commit then passed [run 45922044658](https://github.com/betteryum/seoul-bike-demand/actions/runs/45922044658) at `83506577ff58497b75f6ba19446e2c626504eb95`. Local clean-session acceptance also passed on macOS R 4.4.1. The workflow badge and current Actions result are the release gate for later commits.
+The workflow verifies the frozen day-ahead inference contract without retraining, reselecting, or opening row-level locked-test files. Four audited runs establish the independent repository baseline, public release, and README preview:
+
+| Run | Commit | Repository state | Result |
+|---|---|---|---|
+| [45920704558](https://github.com/betteryum/seoul-bike-demand/actions/runs/45920704558) | `8f311e9e0bc165689cab69150bbe1b5494ec6162` | Initial private commit | SUCCESS; cold restore; 12/12 PASS |
+| [45922044658](https://github.com/betteryum/seoul-bike-demand/actions/runs/45922044658) | `83506577ff58497b75f6ba19446e2c626504eb95` | Documentation commit | SUCCESS; restored cache; 12/12 PASS |
+| [45924701331](https://github.com/betteryum/seoul-bike-demand/actions/runs/45924701331) | `9aa092af07d22f3f282d64ec9c7fdaca78573792` | Public-release commit | SUCCESS; synchronized environment; 12/12 PASS |
+| [45925771208](https://github.com/betteryum/seoul-bike-demand/actions/runs/45925771208) | `f8f690d8b20be114d098c5d1dc6714071e9b94e6` | README Shiny preview commit | SUCCESS; synchronized environment; 12/12 PASS |
+
+Local clean-session acceptance also passed on macOS R 4.4.1. For later commits, the workflow badge and the commit-specific Actions result remain the acceptance gate.
 
 ## First-party references
 
@@ -15,6 +24,8 @@ This workflow checks the frozen day-ahead inference contract in the independent 
 
 ## Access boundary
 
-Only explicit source paths, outcome-free development demo inputs, SQL audit scripts, the split manifest, the frozen model artifact, and aggregate performance evidence are checked out. The CI job checks for private course materials, row-level locked-test files, test-access markers, and common secret files before restoring dependencies. The tests do not train, select, or evaluate a new model and do not deploy the App. The SQL audit uses an in-memory synthetic exact-lag fixture and the development-only demo; it does not load locked-test rows.
+The workflow checks out only explicit source paths, outcome-free development demo inputs, SQL audit scripts, the split manifest, the frozen model, aggregate performance evidence, dependency metadata, and tests. Before dependency restoration it rejects private course directories, row-level locked-test files, test-access markers, and common credential files.
 
-The sparse working tree is a runtime boundary, not a publication audit of Git history. A separate pre-publication review audited both independent commits through `83506577ff58497b75f6ba19446e2c626504eb95`, all 47 historical paths, tracked source, documentation, dependency metadata, links, and frozen hashes. It found no recovery history, course prompts or solutions, row-level locked-test files, credentials, API keys, or local user paths. Later release-only documentation changes remain subject to their own CI run before visibility changes.
+The tests do not train, select, or evaluate a new model and do not deploy the App. The SQL audit uses an in-memory synthetic exact-lag fixture and the development-only demo. The App and CI never load row-level locked-test features, predictions, or outcomes.
+
+Sparse checkout is a runtime boundary, not a substitute for history review. The separate pre-publication audit covered both independent commits through `83506577ff58497b75f6ba19446e2c626504eb95`, all 47 then-existing historical paths, tracked source, documentation, dependency metadata, links, frozen artifacts, aggregate evidence, and model strings. The release checkpoint then verified the documentation-only child commit, unchanged frozen hashes, a 47-file tree, successful public-release CI, and an unchanged private recovery repository before visibility changed. The later README-preview checkpoint verified its single-image child commit, a 48-file tree, unchanged frozen evidence, synchronized `origin/main`, clean portfolio and recovery worktrees, and successful commit-specific CI.

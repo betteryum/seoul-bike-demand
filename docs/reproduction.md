@@ -2,29 +2,43 @@
 
 ## Scope
 
-This repository reproduces the frozen 24-hour inference interface and its contract checks. It does not retrain or reselect the model, download live inputs, or recompute locked-test metrics from row-level outcomes. The App replays outcome-free development inputs and displays committed aggregate evidence.
+This repository reproduces the frozen 24-hour inference interface, contract checks, SQL audits, and Shiny historical replay. It does not retrain or reselect the model, download live inputs, or recompute locked-test metrics from row-level outcomes. The App uses outcome-free development inputs and committed aggregate evidence.
 
-Use R 4.4.1 and Python 3 with the standard-library `sqlite3` module from the project root. `renv.lock` records 114 R packages. A clean restore may download packages from the configured CRAN repository; no credentials or external data API are needed. The frozen model and three aggregate CSV files are checked against recorded MD5 values before inference.
+Use R 4.4.1 and Python 3 with the standard-library `sqlite3` module from the project root. `renv.lock` records 114 R packages. A clean restore may download packages from the configured CRAN repository; no credential or external data API is required. Before inference, the model and three aggregate evidence files are checked against their frozen MD5 values.
 
 ## Restore and accept
 
-In RStudio Terminal at the root of this independent repository, run each complete command:
+From an RStudio Terminal opened at the repository root, run:
 
 ```sh
 Rscript --vanilla -e 'Sys.setenv(RENV_PROJECT = getwd()); source("renv/activate.R"); renv::restore(prompt = FALSE); stopifnot(isTRUE(renv::status(project = getwd())$synchronized))'
 Rscript --vanilla -e 'Sys.setenv(RENV_PROJECT = getwd()); source("renv/activate.R"); source("scripts/90_phase5_acceptance.R")'
 ```
 
-The first command activates this project's package library explicitly, restores the exact lockfile, and checks synchronization. It does not call `renv::snapshot()`. The second starts a separate clean R session, runs four `testthat` groups including frozen-model integration, and checks the model, aggregate evidence, App access boundary, prediction contract, and two SQL audits. It writes `artifacts/phase5/acceptance/checks.csv`, `acceptance.md`, and `test_log.txt`, plus a Desktop checkpoint. On systems without a Desktop directory, create `~/Desktop` before the second command.
+The restore command activates this repository's project library, restores the exact lockfile, and checks synchronization; it does not call `renv::snapshot()`. The acceptance command starts a separate clean R process, executes two SQL audits and four `testthat` groups, and verifies the model, aggregate evidence, App boundary, and prediction contract.
 
-Acceptance requires 12/12 `PASS` with no warnings. A failing check stops the command and records the detail in the checkpoint. Run the App separately from the project root with `shiny::runApp("app")` in the activated RStudio session.
+Local generated outputs are written to `artifacts/phase5/acceptance/checks.csv`, `acceptance.md`, and `test_log.txt`, plus a Desktop checkpoint. They are excluded from Git tracking. On a system without a Desktop directory, create `~/Desktop` before running acceptance.
 
-## Verified status
+Acceptance requires exactly 12/12 `PASS` and no test warnings.
 
-- On macOS with R 4.4.1, a restore into this independent staging project's `renv/library` synchronized all 114 locked packages. Restore runtime was 10.7 seconds, mostly using the local package cache; that timing does not estimate a first download.
-- After the SQL extension, a separate `Rscript --vanilla` invocation with explicit staging activation passed all 12 checks with zero warnings. The installer checkpoint recorded 8.37 seconds for preflight, the standalone SQL audits, and the clean-session acceptance together. The Mac SQL precheck reported Python 3.9.6 and SQLite 3.39.5.
-- The frozen model and three aggregate evidence hashes were unchanged. The App and tests accessed no row-level locked-test files.
-- The first independent GitHub Actions [run 45920704558](https://github.com/betteryum/seoul-bike-demand/actions/runs/45920704558), on commit `8f311e9e0bc165689cab69150bbe1b5494ec6162`, passed on Ubuntu 24.04.5 with R 4.4.1. The runner had no package-cache hit, restored the locked environment, reported `renv::status()` synchronized, and passed all 12 acceptance checks with no R test warnings. See [verification evidence](verification.md) for versions, timings, and log classification.
-- The documentation commit passed GitHub Actions [run 45922044658](https://github.com/betteryum/seoul-bike-demand/actions/runs/45922044658) at `83506577ff58497b75f6ba19446e2c626504eb95`. The Ubuntu 24.04.5 runner restored the existing cache, still executed `renv::restore()`, confirmed synchronization, and passed the same 12 checks in 3.88 seconds. Two `gdebi` Python `SyntaxWarning` lines, a `libx11-dev` setup advisory, and a temporary Git branch-name hint came from runner setup; the R acceptance and four `testthat` groups produced no warnings or errors.
+## Launch the App
 
-These recorded results establish local staging and two independent CI reproductions. Every later commit must pass its own CI run before public release. Historical raw-data preparation is documented in the R functions, but rebuilding and refitting the historical model are outside this frozen inference reproduction.
+After restore, run from the repository root:
+
+```sh
+Rscript --vanilla -e 'Sys.setenv(RENV_PROJECT = getwd()); source("renv/activate.R"); shiny::runApp("app")'
+```
+
+The App exposes Forecast Replay, Model Performance, and Prediction Contract views. Replay dates are limited to complete development-period days and contain no outcome column. The performance page reads only committed aggregate evidence.
+
+## Verified environments
+
+- **macOS, R 4.4.1:** all 114 locked packages synchronized. A separate clean `Rscript --vanilla` session passed all 12 checks, both SQL audits, and all four test groups without warnings. The SQL precheck recorded Python 3.9.6 and SQLite 3.39.5.
+- **Initial Ubuntu CI:** [run 45920704558](https://github.com/betteryum/seoul-bike-demand/actions/runs/45920704558) restored the lockfile without a package-cache hit and passed 12/12 at `8f311e9e0bc165689cab69150bbe1b5494ec6162`.
+- **Documentation Ubuntu CI:** [run 45922044658](https://github.com/betteryum/seoul-bike-demand/actions/runs/45922044658) executed `renv::restore()`, confirmed synchronization, and passed 12/12 at `83506577ff58497b75f6ba19446e2c626504eb95`.
+- **Public-release Ubuntu CI:** [run 45924701331](https://github.com/betteryum/seoul-bike-demand/actions/runs/45924701331) passed at `9aa092af07d22f3f282d64ec9c7fdaca78573792` on Ubuntu 24.04.5 with R 4.4.1. Every job step succeeded, the same 12 checks passed, and all four R test groups were warning-free.
+- **README-preview Ubuntu CI:** [run 45925771208](https://github.com/betteryum/seoul-bike-demand/actions/runs/45925771208) passed at `f8f690d8b20be114d098c5d1dc6714071e9b94e6` on Ubuntu 24.04.5 with R 4.4.1. The environment synchronized, all 12 checks passed, and all four R test groups were warning-free.
+
+Runner setup logs included external system advisories in earlier runs, but no R acceptance or `testthat` warning occurred. See [verification evidence](verification.md) for classification, history review, and exact frozen hashes.
+
+Historical data preparation, feature engineering, resampling, and model construction are documented in `R/`. Rebuilding or refitting the historical model is intentionally outside this frozen-inference reproduction.
